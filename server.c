@@ -97,7 +97,7 @@ void handleClientRequest(int client_socket) {
     // char* endpoint = token;
     // token = strtok(NULL, " ");
     // char* httpVersion = token;
-printf("Received request\n");
+    printf("Received request\n");
     // Process the request based on the endpoint and HTTP method
     // if (strcmp(endpoint, "/tle") == 0 && strcmp(method, "GET") == 0) {
         // Extract the catalog number from the URL
