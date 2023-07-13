@@ -38,6 +38,8 @@ sgpsdp/test-002: libgpredict.a
 	gcc sgpsdp/test-002.c -Wall -o sgpsdp/test-002 -L. -lgpredict `pkg-config --cflags --libs glib-2.0` -lm
 iss-test: libgpredict.a
 	gcc iss-test.c -Wall -o iss-test -L. -lgpredict `pkg-config --cflags --libs glib-2.0` -lm -lcurl -ldl -lpthread
+server: libgpredict.a
+	gcc server.c -Wall -o server -L -lgpredict `pkg-config --cflags --libs glib-2.0` -lm -lcurl -ldl -lpthread
 test: iss-test
 	(cd sgpsdp; ../iss-test)
 libgpredict.a: all-components

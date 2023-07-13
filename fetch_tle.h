@@ -18,6 +18,6 @@ typedef struct {
 } TLEData;
 
 //int set_cat_num(char cat_num [], TLEData *tle);
-int set_cat_num(char cat_num [], char (*tle_str)[80]);
+int set_cat_num(char cat_num [], char tle_str[3][80]);
 //int get_tle(char url [], TLEData *tle);
-int get_tle(char url [], char (*tle_str)[80]);
+int get_tle(char url [], char tle_str[3][80]);

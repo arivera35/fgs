@@ -6,7 +6,7 @@
     return get_tle(buffer, tle);
 }*/
 
-int set_cat_num(char cat_num [], char (*tle_str)[80]){
+int set_cat_num(char cat_num [], char tle_str[3][80]){
     char buffer [1000] = CELESTRACK_URL;
     snprintf(buffer, sizeof(CELESTRACK_URL)+4, CELESTRACK_URL, cat_num);
     return get_tle(buffer, tle_str);
@@ -54,7 +54,7 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp) {
 */
 }
 
-int get_tle(char url [], char (*tle_str)[80]){
+int get_tle(char url [], char tle_str[3][80]){
     // initializing curl pointer
     CURL *curl = curl_easy_init();
     if (!curl){
