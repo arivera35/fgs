@@ -1,76 +1,97 @@
 #include "fetch_tle.h"
 
-/*int set_cat_num(char cat_num [], TLEData *tle){
-    char buffer [1000] = CELESTRACK_URL;
-    snprintf(buffer, sizeof(CELESTRACK_URL)+4, CELESTRACK_URL, cat_num);
-    return get_tle(buffer, tle);
-}*/
 
-int set_cat_num(char cat_num [], char tle_str[3][80]){
-    char buffer [1000] = CELESTRACK_URL;
-    snprintf(buffer, sizeof(CELESTRACK_URL)+4, CELESTRACK_URL, cat_num);
-    return get_tle(buffer, tle_str);
-}
-
-size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp) {
-    size_t total_size = size * nmemb;
-    char (*tle_str)[80] = (char (*)[80])userp;
-    char *tle_string = malloc(total_size + 1);
-    memcpy(tle_string, contents, total_size);
-    tle_string[total_size] = '\0';
-
-    // Extract line1 and line2 from the TLE string
-    char* line0 = strtok(tle_string, "\n");
-    char* line1 = strtok(NULL, "\n");
-    char* line2 = strtok(NULL, "\n");
-
-    // Store the TLE lines in the TLEData structure
-    strncpy(tle_str[0], line0, 80);
-    strncpy(tle_str[1], line1, 80);
-    strncpy(tle_str[2], line2, 80);
-
-    free(tle_string);
-
-    return total_size;
-/*    size_t total_size = size * nmemb;
-    TLEData *tle_data = (TLEData *)userp;
-    char *tle_string = malloc(total_size + 1);
-    memcpy(tle_string, contents, total_size);
-    tle_string[total_size] = '\0';
-
-    // Extract line1 and line2 from the TLE string
-    char* line0 = strtok(tle_string, "\n");
-    char* line1 = strtok(NULL, "\n");
-    char* line2 = strtok(NULL, "\n");
-
-    // Store the TLE lines in the TLEData structure
-    tle_data->line0 = strdup(line0);
-    tle_data->line1 = strdup(line1);
-    tle_data->line2 = strdup(line2);
-
-    free(tle_string);
-
-    return total_size;
-*/
-}
-
-int get_tle(char url [], char tle_str[3][80]){
-    // initializing curl pointer
-    CURL *curl = curl_easy_init();
-    if (!curl){
-        printf("Error initializing curl\n");
-        return -1;
-    }
-    // set options
-    curl_easy_setopt(curl, CURLOPT_URL, url);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, tle_str);
-    // perform action
-    CURLcode result = curl_easy_perform(curl);
-    if (result > 0 | result > 0){
-        printf("Error downloading data\n");
-        return -1;
-    }
-    curl_easy_cleanup(curl);
-    return 1;
+static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
+{
+  size_t written = fwrite(ptr, size, nmemb, (FILE *)stream);
+  return written;
 } 
+
+int fetch_all_tles(){
+    CURL *curl_handle;
+    static const char *pagefilename = "tles.txt";
+    FILE *pagefile;
+    
+    curl_global_init(CURL_GLOBAL_ALL);
+    /* init the curl session */
+    curl_handle = curl_easy_init();
+    
+    /* set URL to get here */
+    curl_easy_setopt(curl_handle, CURLOPT_URL, CELESTRACK_URL);
+    
+    /* Switch on full protocol/debug output while testing */
+    curl_easy_setopt(curl_handle, CURLOPT_VERBOSE, 1L);
+    
+    /* disable progress meter, set to 0L to enable it */
+    curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, 1L);
+    
+    /* send all data to this function  */
+    curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
+    
+    /* open the file */
+    pagefile = fopen(pagefilename, "wb");
+    if(pagefile) {
+    
+        /* write the page body to this file handle */
+        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, pagefile);
+    
+        /* get it! */
+        curl_easy_perform(curl_handle);
+    
+        /* close the header file */
+        fclose(pagefile);
+    }
+    
+    /* cleanup curl stuff */
+    curl_easy_cleanup(curl_handle);
+    
+    curl_global_cleanup();
+    
+    return 0;
+}
+
+int get_sat_tle(char cat_num [], char tle_str[3][80]){
+
+    FILE *file = fopen("tles.txt", "r");
+        if (file == NULL) {
+        printf("Error opening file.\n");
+        return 1;
+    }
+
+    char line[256];
+    int found = 0;
+
+    while (fgets(line, sizeof(line), file) != NULL) {
+        // Check if the line starts with the desired catalog number
+        if (strncmp(line + 2, cat_num, 5) == 0) {
+            found = 1;
+
+            // Move the file position indicator two lines back
+            fseek(file, -(strlen(line) + strlen(tle_str[0])), SEEK_CUR);
+
+            
+
+            // Read the line before the TLE data
+            fgets(tle_str[0], sizeof(tle_str[0]), file);
+            tle_str[0][strlen(tle_str[0]) - 1] = '\0';  // Remove the newline character
+
+            // Read the two lines after the line before TLE data
+            fgets(tle_str[1], sizeof(tle_str[1]), file);
+            fgets(tle_str[2], sizeof(tle_str[2]), file);
+
+            break;
+        }
+        // Store the current line as the line before TLE data
+        strcpy(tle_str[0], line);
+    }
+    fclose(file);
+    if (found) {
+        return 0;
+    } else {
+        printf("Catalog number not found.\n");
+        return -1;
+    }
+    
+}
+
+ 

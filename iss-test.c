@@ -68,13 +68,23 @@ tle_t tle;
 
 int main () {
 
+    char tle_str[3][80];
     char catnr [5];
+    sat_t sat;
+    qth_t qth;
+    tle_t tle;
+    
+    //allocating memory
+    // char *tle_str = (char *)malloc(3 * 80 * sizeof(*tle_str));
+    
+    // fetch_all_tles();
     printf("Enter NORAD catalog number: ");
     scanf("%s", catnr);
-    set_cat_num(catnr, tle_str);
+    get_sat_tle(catnr, tle_str);
     printf("TLE line 0: %s\n", tle_str[0]);
-    printf("TLE line 1: %s\n", tle_str[1]);
-	  printf("TLE line 2: %s\n", tle_str[2]);
+    printf("TLE line 1: %s", tle_str[1]);
+	printf("TLE line 2: %s\n", tle_str[2]);
+
   
     /* ISS */
     // strcpy( tle_str[0], "ISS (ZARYA)");
