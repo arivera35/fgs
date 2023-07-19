@@ -196,15 +196,23 @@ Julian_Date(struct tm *cdate)
  *  Julian_Date() performs the inverse of this function.
  */
 
-void
-Date_Time(double julian_date, struct tm *cdate)
-{
+void Date_Time(double julian_date, struct tm *cdate) {
   time_t jtime;
+  struct tm *tm_ptr;
 
-  jtime = (julian_date - 2440587.5)*86400.;
-  *cdate = *gmtime( &jtime );
+  jtime = (julian_date - 2440587.5) * 86400.;
+  tm_ptr = gmtime(&jtime);
 
-} /* End of Date_Time() */
+  if (tm_ptr != NULL) {
+    *cdate = *tm_ptr;
+  } else {
+    // Handle the case when gmtime fails to convert the time
+    // Set the struct tm to an error or default state
+    memset(cdate, 0, sizeof(struct tm));
+  }
+}
+
+/* End of Date_Time() */
 
 
 /*------------------------------------------------------------------*/

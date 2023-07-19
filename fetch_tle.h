@@ -14,4 +14,6 @@ typedef struct {
 } TLEData;
 
 int fetch_all_tles();
-int get_sat_tle(char cat_num [], char tle_str[3][80]);
+// int get_sat_tle(char cat_num [], char tle_str[3][80]);
+char** get_sat_tle(char cat_num[]);
+// int get_sat_tle(char cat_num [], char **tle_str);

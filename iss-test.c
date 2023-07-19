@@ -61,29 +61,41 @@
 #include <stdio.h>
 #include "libgpredict.h"
 
-char  tle_str[3][80];
-sat_t sat;
-qth_t qth;
-tle_t tle;
-
 int main () {
 
-    char tle_str[3][80];
+    char sat_tle[3][80];
     char catnr [5];
     sat_t sat;
     qth_t qth;
     tle_t tle;
     
-    //allocating memory
-    // char *tle_str = (char *)malloc(3 * 80 * sizeof(*tle_str));
-    
-    // fetch_all_tles();
     printf("Enter NORAD catalog number: ");
     scanf("%s", catnr);
-    get_sat_tle(catnr, tle_str);
-    printf("TLE line 0: %s\n", tle_str[0]);
-    printf("TLE line 1: %s", tle_str[1]);
-	printf("TLE line 2: %s\n", tle_str[2]);
+    char **tle_str = get_sat_tle(catnr);
+    if (tle_str != NULL) {
+        // Copy the TLE lines into the tle_str array
+        strcpy(sat_tle[0], tle_str[0]);
+        strcpy(sat_tle[1], tle_str[1]);
+        strcpy(sat_tle[2], tle_str[2]);
+
+        printf("TLE line 0: %s\n", sat_tle[0]);
+        printf("TLE line 1: %s\n", sat_tle[1]);
+        printf("TLE line 2: %s\n", sat_tle[2]);
+
+        // Free the allocated memory
+        // for (int i = 0; i < 3; i++) {
+        //     free(tle_str[i]);
+        // }
+        // free(tle_str);
+    }
+usleep(200000);
+
+
+
+    // get_sat_tle(catnr, &tle_str);
+    // printf("TLE line 0: %s\n", tle_str[0]);
+    // printf("TLE line 1: %s", tle_str[1]);
+	// printf("TLE line 2: %s\n", tle_str[2]);
 
   
     /* ISS */
@@ -101,10 +113,10 @@ int main () {
     // strcpy(tle_str[1], "1 04793U 70106A   23188.08804067 -.00000027  00000+0  10276-3 0  9990");
     // strcpy(tle_str[2], "2 04793 101.5015 246.3286 0031034 293.0513  95.9834 12.54016614406281");
   
-
-    Get_Next_Tle_Set(tle_str, &tle);
-    
-    if (Get_Next_Tle_Set (tle_str, &sat.tle) == 1) {
+    printf("ABOUT TO SET TLE\n");
+    Get_Next_Tle_Set(sat_tle, &tle);
+    usleep(200000);
+    if (Get_Next_Tle_Set (sat_tle, &sat.tle) == 1) {
         printf ("\nTLE Data OK\n\n");
     } else {
         printf ("\nTLE NOT OK, exiting\n");
@@ -116,73 +128,28 @@ int main () {
     qth.lon = -106.4376003;
     qth.alt = 255;
 
+    printf("ABOUT TO SELECT EPHEMERIS\n");
+
     // /* Initialize Satellite */
     select_ephemeris (&sat);
     gtk_sat_data_init_sat(&sat, &qth);
-
+usleep(200000);
     double curr_time;
     struct tm cdate;
     char buffer[26];
-
+printf("ABOUT TO GET NEXT PASS\n");
     pass_t *pass = get_next_pass(&sat, &qth, 2.0);
+    usleep(300000);
+    printf("GOT NEXT PASS\n");
+    printf("AOS:%f \n", pass->aos);
+    printf("Orbit:%d \n", pass->orbit);
     Date_Time(pass->aos, &cdate);
-    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &cdate);
-    printf("%s\n", buffer);
-    // GSList *list = get_next_passes(&sat, &qth, 5.0 , 18);
-    // GSList *current = list;
-    // struct tm cdate;
-    // char buffer[80];
-
-    // while (current != NULL) {
-    //     pass_t *pass = (pass_t*)current->data;
-
-    //     Date_Time(pass->aos, &cdate);
-        
-    //     strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &cdate);
-
-    //     // Get time zone offset in seconds
-    //     time_t currentTime = time(NULL);
-    //     struct tm *localTime = localtime(&currentTime);
-    //     int timeZoneOffset = localTime->tm_gmtoff;
-
-    //     // Convert time zone offset to hours and minutes
-    //     int hours_aos = timeZoneOffset / 3600;
-    //     int minutes_aos = (timeZoneOffset % 3600) / 60;
-
-    //     // Append time zone offset to the formatted date and time string
-    //     sprintf(buffer + strlen(buffer), " %c%02d:%02d", (timeZoneOffset >= 0) ? '+' : '-', abs(hours_aos), abs(minutes_aos));
-
-    //     printf("AOS: %s\n", buffer);
-
-    //     Date_Time(pass->los, &cdate);
-    //     strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &cdate);
-
-    //     // Get time zone offset in seconds
-    //     currentTime = time(NULL);
-    //     localTime = localtime(&currentTime);
-    //     timeZoneOffset = localTime->tm_gmtoff;
-
-    //     // Convert time zone offset to hours and minutes
-    //     int hours_los = timeZoneOffset / 3600;
-    //     int minutes_los = (timeZoneOffset % 3600) / 60;
-
-    //     // Append time zone offset to the formatted date and time string
-    //     sprintf(buffer + strlen(buffer), " %c%02d:%02d", (timeZoneOffset >= 0) ? '+' : '-', abs(hours_los), abs(minutes_los));
-
-    //     printf("LOS: %s\n", buffer);
-
-    //     // float duration = abs(minutes_los) - abs(minutes_aos);
-    //     // printf("Pass duration: %f\n", duration);
-    //     // if (duration > 180) {
-    //     //     printf("Pass is less than 3 minutes\n");
-    //     // }
-    //     // else {
-    //     printf("AOS: %f\n", pass->aos);
-    //     printf("TCA: %f\n", pass->tca);
-    //     printf("LOS: %f\n", pass->los);
-    //     // }
-    //     current = current->next;
-    // }
+    // usleep(300000);
+    // printf("GOT DATE TIME\n");
+    // strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &cdate);
+    //     printf("FORMATTED NEXT PASS\n");
+    //     usleep(200000);
+    // printf("%s\n", buffer);
 
     while(1){
         curr_time = get_current_daynum();
