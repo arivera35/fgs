@@ -26,6 +26,7 @@ void updateTLEDataFromAPI(sqlite3* db) {
         // Set the API URL
         const char* api_url = "http://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle";
 
+        printf("ABOUT TO ACCESS API URL\n");
         // Set up libcurl options
         curl_easy_setopt(curl, CURLOPT_URL, api_url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -34,6 +35,7 @@ void updateTLEDataFromAPI(sqlite3* db) {
         // Perform the HTTP GET request
         res = curl_easy_perform(curl);
 
+        printf("PERFORMED GET REQUEST\n");
         // Check for errors
         if (res != CURLE_OK) {
             fprintf(stderr, "Error while fetching TLE data from the API: %s\n", curl_easy_strerror(res));

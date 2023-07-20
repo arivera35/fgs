@@ -37,7 +37,7 @@ int insertTLEData(sqlite3* db, char* catalog_number, char* name, char* tle_line_
     char *err_msg = 0;
     sqlite3_stmt* stmt;
 
-    printf("IN INSERTTLEDATA\n");
+    // printf("IN INSERTTLEDATA\n");
     int rc = sqlite3_open("test.db", &db);
 
     const char* insert_sql = "INSERT INTO TLE (CATALOG_NUMBER, NAME, TLE_LINE_1, TLE_LINE_2) VALUES (?, ?, ?, ?);";
@@ -57,7 +57,7 @@ int insertTLEData(sqlite3* db, char* catalog_number, char* name, char* tle_line_
 
     sqlite3_finalize(stmt);
 
-    printf("FINISHED INSERTING DATA\n");
+    // printf("FINISHED INSERTING DATA\n");
     sqlite3_close(db);
     return 0;
 }
