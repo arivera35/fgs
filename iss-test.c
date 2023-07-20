@@ -68,7 +68,7 @@ int main () {
     sat_t sat;
     qth_t qth;
     tle_t tle;
-    
+    // fetch_all_tles();
     printf("Enter NORAD catalog number: ");
     scanf("%s", catnr);
     char **tle_str = get_sat_tle(catnr);
@@ -144,12 +144,12 @@ printf("ABOUT TO GET NEXT PASS\n");
     printf("AOS:%f \n", pass->aos);
     printf("Orbit:%d \n", pass->orbit);
     Date_Time(pass->aos, &cdate);
-    // usleep(300000);
-    // printf("GOT DATE TIME\n");
-    // strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &cdate);
-    //     printf("FORMATTED NEXT PASS\n");
-    //     usleep(200000);
-    // printf("%s\n", buffer);
+    usleep(300000);
+    printf("GOT DATE TIME\n");
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &cdate);
+        printf("FORMATTED NEXT PASS\n");
+        usleep(200000);
+    printf("%s\n", buffer);
 
     while(1){
         curr_time = get_current_daynum();
