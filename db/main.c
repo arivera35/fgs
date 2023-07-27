@@ -8,10 +8,23 @@
 
 int main(void) {
     
-    sqlite3 *db;
-    // int res = createTLETable(db);
-    createTLETable(db);
-    // insertTLEData(db, "25544", "ISS (ZARYA)", "1 25544U 98067A   23201.19134634  .00010982  00000+0  20095-3 0  9997", "2 25544  51.6392 164.9972 0000314  45.9683 314.1332 15.49879208406919");
-    updateTLEDataFromAPI(db);
+    printf("HEY\n");
+    const char *api_url = "http://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle";
+    char *data = fetch_data_from_api(api_url);
+    printf("DATA %ld", sizeof(data));
+    if (data) {
+        sqlite3 *db = open_database("test.db");
+        if (db) {
+            create_table(db);
+            insert_data_into_database(db, data);
+
+            // Close the database connection
+            sqlite3_close(db);
+        }
+
+        free(data);
+    }
+
     return 0;
+
 }
