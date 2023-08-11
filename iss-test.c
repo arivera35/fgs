@@ -83,37 +83,13 @@ int main () {
         printf("TLE line 2: %s\n", sat_tle[2]);
 
         // Free the allocated memory
-        // for (int i = 0; i < 3; i++) {
-        //     free(tle_str[i]);
-        // }
-        // free(tle_str);
+        for (int i = 0; i < 3; i++) {
+            free(tle_str[i]);
+        }
+        free(tle_str);
     }
-usleep(200000);
-
-
-
-    // get_sat_tle(catnr, &tle_str);
-    // printf("TLE line 0: %s\n", tle_str[0]);
-    // printf("TLE line 1: %s", tle_str[1]);
-	// printf("TLE line 2: %s\n", tle_str[2]);
-
-  
-    /* ISS */
-    // strcpy( tle_str[0], "ISS (ZARYA)");
-    // strcpy(tle_str[1], "1 25544U 98067A   23188.51662157  .00010281  00000+0  19057-3 0  9991");
-    // strcpy(tle_str[2], "2 25544  51.6406 227.7630 0000247  61.6810  99.2425 15.49589703404949");
+    usleep(200000);  
     
-    // printf("TLE line 0: %s\n", tle_str[0]);
-    // printf("TLE line 1: %s\n", tle_str[1]);
-	  // printf("TLE line 2: %s\n", tle_str[2]);
-
-
-    /* NOAA 1 */
-    // strcpy( tle_str[0], "NOAA 1");
-    // strcpy(tle_str[1], "1 04793U 70106A   23188.08804067 -.00000027  00000+0  10276-3 0  9990");
-    // strcpy(tle_str[2], "2 04793 101.5015 246.3286 0031034 293.0513  95.9834 12.54016614406281");
-  
-    printf("ABOUT TO SET TLE\n");
     Get_Next_Tle_Set(sat_tle, &tle);
     usleep(200000);
     if (Get_Next_Tle_Set (sat_tle, &sat.tle) == 1) {
@@ -128,46 +104,64 @@ usleep(200000);
     qth.lon = -106.4376003;
     qth.alt = 255;
 
-    printf("ABOUT TO SELECT EPHEMERIS\n");
-
-    // /* Initialize Satellite */
+//     // /* Initialize Satellite */
     select_ephemeris (&sat);
     gtk_sat_data_init_sat(&sat, &qth);
-usleep(200000);
     double curr_time;
     struct tm cdate;
+    struct tm cdate_los;
     char buffer[26];
-printf("ABOUT TO GET NEXT PASS\n");
-    pass_t *pass = get_next_pass(&sat, &qth, 2.0);
-    usleep(300000);
-    printf("GOT NEXT PASS\n");
-    printf("AOS:%f \n", pass->aos);
-    printf("Orbit:%d \n", pass->orbit);
-    Date_Time(pass->aos, &cdate);
-    usleep(300000);
-    printf("GOT DATE TIME\n");
+    char buffer_los[26];
+    gdouble aos, los;
+
+    curr_time = get_current_daynum();
+    aos = find_aos(&sat, &qth, curr_time, 1);
+    usleep(20000);
+    printf("AOS %lf\n", aos);
+    los = find_los(&sat, &qth, curr_time, 1);
+    usleep(20000);
+    printf("LOS %lf\n", los);
+
+    Date_Time(aos, &cdate);
     strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &cdate);
-        printf("FORMATTED NEXT PASS\n");
-        usleep(200000);
     printf("%s\n", buffer);
+    
+    Date_Time(los, &cdate_los);
+    strftime(buffer_los, sizeof(buffer_los), "%Y-%m-%d %H:%M:%S", &cdate_los);
+    printf("%s\n", buffer_los);
 
-    while(1){
-        curr_time = get_current_daynum();
-        // /* Calculate Position for specified date */
-        predict_calc(&sat, &qth, curr_time);
 
-        // /* Display results */
-        printf("\nLat:       %10.12f\n", sat.ssplat);
-        printf("Lon:       %10.12f\n", sat.ssplon);
-        printf("Azimuth:    %f\n", sat.az);
-        printf("Elevation:  %f\n", sat.el);
-        printf("Range Rate:  %f\n", sat.range_rate);
-        printf("Footprint:  %f\n", sat.footprint);
-        printf("Alt:        %4.10f\n", sat.alt);
-        printf("Velocity (km/s):  %10.10f\n", sat.velo);
+    // pass_t *pass;
+    // free_pass(pass);
+    // pass = get_next_pass(&sat, &qth, 2.0);
+    // usleep(300000);
 
-        usleep(2000000);
+    // Date_Time(pass->aos, &cdate);
+    // free_pass(pass);
+    // usleep(300000);
+    // printf("GOT DATE TIME\n");
+    // strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &cdate);
+    //     // printf("FORMATTED NEXT PASS\n");
+        // usleep(200000);
+    // printf("%s\n", buffer);
+   
+//     while(1){
+//         curr_time = get_current_daynum();
+//         // /* Calculate Position for specified date */
+//         predict_calc(&sat, &qth, curr_time);
 
-    }
+//         // /* Display results */
+//         printf("\nLat:       %10.12f\n", sat.ssplat);
+//         printf("Lon:       %10.12f\n", sat.ssplon);
+//         printf("Azimuth:    %f\n", sat.az);
+//         printf("Elevation:  %f\n", sat.el);
+//         printf("Range Rate:  %f\n", sat.range_rate);
+//         printf("Footprint:  %f\n", sat.footprint);
+//         printf("Alt:        %4.10f\n", sat.alt);
+//         printf("Velocity (km/s):  %10.10f\n", sat.velo);
+
+//         usleep(2000000);
+
+//     }
 
 }
