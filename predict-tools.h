@@ -84,6 +84,7 @@ typedef struct {
 
 /* SGP4/SDP4 driver */
 void predict_calc (sat_t *sat, qth_t *qth, gdouble t);
+void predict_calc_current (sat_t *sat, qth_t *qth);
 
 /* AOS/LOS time calculators */
 gdouble find_aos           (sat_t *sat, qth_t *qth, gdouble start, gdouble maxdt);

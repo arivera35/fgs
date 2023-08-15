@@ -9,7 +9,7 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
 
 int fetch_all_tles(){
     CURL *curl_handle;
-    static const char *pagefilename = "tles.txt";
+    static const char *pagefilename = "../tles.txt";
     FILE *pagefile;
     
     curl_global_init(CURL_GLOBAL_ALL);
@@ -145,7 +145,7 @@ int file_size(FILE *fp){
     
 // }
 char** get_sat_tle(char cat_num[]) {
-    FILE *file = fopen("tles.txt", "r");
+    FILE *file = fopen("../tles.txt", "r");
     if (file == NULL) {
         printf("Error opening file.\n");
         return NULL;

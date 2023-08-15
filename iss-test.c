@@ -68,7 +68,7 @@ int main () {
     sat_t sat;
     qth_t qth;
     tle_t tle;
-    // fetch_all_tles();
+    //fetch_all_tles();
     printf("Enter NORAD catalog number: ");
     scanf("%s", catnr);
     char **tle_str = get_sat_tle(catnr);
@@ -104,7 +104,7 @@ int main () {
     qth.lon = -106.4376003;
     qth.alt = 255;
 
-//     // /* Initialize Satellite */
+    /* Initialize Satellite */
     select_ephemeris (&sat);
     gtk_sat_data_init_sat(&sat, &qth);
     double curr_time;
@@ -129,39 +129,24 @@ int main () {
     Date_Time(los, &cdate_los);
     strftime(buffer_los, sizeof(buffer_los), "%Y-%m-%d %H:%M:%S", &cdate_los);
     printf("%s\n", buffer_los);
-
-
-    // pass_t *pass;
-    // free_pass(pass);
-    // pass = get_next_pass(&sat, &qth, 2.0);
-    // usleep(300000);
-
-    // Date_Time(pass->aos, &cdate);
-    // free_pass(pass);
-    // usleep(300000);
-    // printf("GOT DATE TIME\n");
-    // strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &cdate);
-    //     // printf("FORMATTED NEXT PASS\n");
-        // usleep(200000);
-    // printf("%s\n", buffer);
    
-//     while(1){
-//         curr_time = get_current_daynum();
-//         // /* Calculate Position for specified date */
-//         predict_calc(&sat, &qth, curr_time);
+    while(1){
+        // curr_time = get_current_daynum();
+         // /* Calculate Position for specified date */
+         predict_calc_current(&sat, &qth);
 
-//         // /* Display results */
-//         printf("\nLat:       %10.12f\n", sat.ssplat);
-//         printf("Lon:       %10.12f\n", sat.ssplon);
-//         printf("Azimuth:    %f\n", sat.az);
-//         printf("Elevation:  %f\n", sat.el);
-//         printf("Range Rate:  %f\n", sat.range_rate);
-//         printf("Footprint:  %f\n", sat.footprint);
-//         printf("Alt:        %4.10f\n", sat.alt);
-//         printf("Velocity (km/s):  %10.10f\n", sat.velo);
+         /* Display results */
+         printf("\nLat:       %10.12f\n", sat.ssplat);
+         printf("Lon:       %10.12f\n", sat.ssplon);
+         printf("Azimuth:    %f\n", sat.az);
+         printf("Elevation:  %f\n", sat.el);
+         printf("Range Rate:  %f\n", sat.range_rate);
+         printf("Footprint:  %f\n", sat.footprint);
+         printf("Alt:        %4.10f\n", sat.alt);
+         printf("Velocity (km/s):  %10.10f\n", sat.velo);
 
-//         usleep(2000000);
+        usleep(1000000);
 
-//     }
+    }
 
 }

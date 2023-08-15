@@ -38,10 +38,14 @@ sgpsdp/test-002: libgpredict.a
 	gcc sgpsdp/test-002.c -Wall -o sgpsdp/test-002 -L. -lgpredict `pkg-config --cflags --libs glib-2.0` -lm
 iss-test: libgpredict.a
 	gcc iss-test.c -Wall -o iss-test -L. -lgpredict `pkg-config --cflags --libs glib-2.0` -lm -lcurl -ldl -lpthread
+c_wrapper: libgpredict.a
+	gcc c_wrapper.c -Wall -o c_wrapper -L. -lgpredict `pkg-config --cflags --libs glib-2.0` -lm -lcurl -ldl -lpthread
 server: libgpredict.a
 	gcc server.c -Wall -o server -L -lgpredict `pkg-config --cflags --libs glib-2.0` -lm -lcurl -ldl -lpthread
 test: iss-test
 	(cd sgpsdp; ../iss-test)
+test_wrapper: c_wrapper
+	(cd sgpsdp; ../c_wrapper)
 libgpredict.a: all-components
 	ar rcs libgpredict.a sgpsdp/sgp_time.o sgpsdp/sgp_math.o sgpsdp/sgp4sdp4.o sgpsdp/sgp_in.o sgpsdp/sgp_obs.o sgpsdp/solar.o predict-tools.o time-tools.o gtk-sat-data.o orbit-tools.o qth-data.o sat-vis.o fetch_tle.o mongoose.o
 
